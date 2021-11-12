@@ -160,10 +160,10 @@ def run_bulk(config):
         _style_segment = os.path.join(config.style_segment, fname) if config.style_segment else None
         _output = os.path.join(config.output, fname)
 
-        content = open_image(_content, config.image_size).to(device)
-        style = open_image(_style, config.image_size).to(device)
-        content_segment = load_segment(_content_segment, config.image_size)
-        style_segment = load_segment(_style_segment, config.image_size)     
+        content = open_image(_content, None).to(device)
+        style = open_image(_style, None).to(device)
+        content_segment = load_segment(_content_segment, None)
+        style_segment = load_segment(_style_segment, None)     
         _, ext = os.path.splitext(fname)
         
         if not config.transfer_all:
