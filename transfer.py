@@ -134,7 +134,8 @@ def get_all_transfer():
 def run_bulk(config):
     device = 'cpu' if config.cpu or not torch.cuda.is_available() else 'cuda:0'
     device = torch.device(device)
-
+    print("lul")
+    print(f"Running on device {device}")
     transfer_at = set()
     if config.transfer_at_encoder:
         transfer_at.add('encoder')
@@ -144,21 +145,26 @@ def run_bulk(config):
         transfer_at.add('skip')
 
     # The filenames of the content and style pair should match
-    fnames = set(os.listdir(config.content)) & set(os.listdir(config.style))
+    fnames = set([os.path.splitext(x)[0] for x in os.listdir(config.content)]) & set([os.path.splitext(x)[0] for x in os.listdir(config.style)])
 
     if config.content_segment and config.style_segment:
-        fnames &= set(os.listdir(config.content_segment))
-        fnames &= set(os.listdir(config.style_segment))
+        fnames &= set([os.path.splitext(x)[0] for x in os.listdir(config.content_segment)])
+        fnames &= set([os.path.splitext(x)[0] for x in os.listdir(config.style_segment)])
+
+    print("Fnames:")
+    print(fnames)
 
     for fname in tqdm.tqdm(fnames):
+        '''
         if not is_image_file(fname):
             print('invalid file (is not image), ', fname)
             continue
-        _content = os.path.join(config.content, fname)
-        _style = os.path.join(config.style, fname)
-        _content_segment = os.path.join(config.content_segment, fname) if config.content_segment else None
-        _style_segment = os.path.join(config.style_segment, fname) if config.style_segment else None
-        _output = os.path.join(config.output, fname)
+        '''
+        _content = os.path.join(config.content, fname + ".jpg")
+        _style = os.path.join(config.style, fname + ".jpg")
+        _content_segment = os.path.join(config.content_segment, fname + ".png") if config.content_segment else None
+        _style_segment = os.path.join(config.style_segment, fname + ".png") if config.style_segment else None
+        _output = os.path.join(config.output, fname + ".jpg")
 
         content = open_image(_content, None).to(device)
         style = open_image(_style, None).to(device)
